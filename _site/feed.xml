@@ -1,32 +1,65 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-06T05:55:05+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">汤佳杰的博客</title><subtitle>无言</subtitle><entry><title type="html">Welcome to Jekyll!</title><link href="http://localhost:4000/jekyll/update/2020/04/06/welcome-to-jekyll.html" rel="alternate" type="text/html" title="Welcome to Jekyll!" /><published>2020-04-06T03:48:52+08:00</published><updated>2020-04-06T03:48:52+08:00</updated><id>http://localhost:4000/jekyll/update/2020/04/06/welcome-to-jekyll</id><content type="html" xml:base="http://localhost:4000/jekyll/update/2020/04/06/welcome-to-jekyll.html">&lt;p&gt;You’ll find this post in your &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;_posts&lt;/code&gt; directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jekyll serve&lt;/code&gt;, which launches a web server and auto-regenerates your site when a file is updated.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.8.5">Jekyll</generator><link href="http://localhost:4000/feed.xml" rel="self" type="application/atom+xml" /><link href="http://localhost:4000/" rel="alternate" type="text/html" /><updated>2020-04-07T01:48:52+08:00</updated><id>http://localhost:4000/feed.xml</id><title type="html">汤佳杰的博客</title><subtitle>无言</subtitle><entry><title type="html">[计算机技术] 代码优化-综述</title><link href="http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%960.html" rel="alternate" type="text/html" title="[计算机技术] 代码优化-综述" /><published>2020-04-07T01:43:52+08:00</published><updated>2020-04-07T01:43:52+08:00</updated><id>http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/2020/04/07/%5B%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF%5D-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%960</id><content type="html" xml:base="http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%960.html">&lt;blockquote&gt;
+  &lt;p&gt;“Premature optimization is the root of all evil.”&lt;/p&gt;
+&lt;/blockquote&gt;
 
-&lt;p&gt;Jekyll requires blog post files to be named according to the following format:&lt;/p&gt;
+&lt;h2 id=&quot;概述&quot;&gt;概述&lt;/h2&gt;
 
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YEAR-MONTH-DAY-title.MARKUP&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;针对C++代码的优化，主要可以分为：&lt;em&gt;线性代码优化&lt;/em&gt;；&lt;em&gt;缓存读写优化&lt;/em&gt;和&lt;em&gt;并行优化&lt;/em&gt;。本章只概述每一个的根据和大概方法，接下来博客会针对每种优化进行相信分析。&lt;/p&gt;
 
-&lt;p&gt;Where &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YEAR&lt;/code&gt; is a four-digit number, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MONTH&lt;/code&gt; and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;DAY&lt;/code&gt; are both two-digit numbers, and &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MARKUP&lt;/code&gt; is the file extension representing the format used in the file. After that, include the necessary front matter. Take a look at the source for this post to get an idea about how it works.&lt;/p&gt;
+&lt;h3 id=&quot;线性代码优化&quot;&gt;线性代码优化&lt;/h3&gt;
 
-&lt;p&gt;Jekyll also offers powerful support for code snippets:&lt;/p&gt;
+&lt;p&gt;在一个线性代码块中，程序的运行顺序以及依赖关系可以用有向图表示，例如&lt;/p&gt;
 
-&lt;figure class=&quot;highlight&quot;&gt;&lt;pre&gt;&lt;code class=&quot;language-ruby&quot; data-lang=&quot;ruby&quot;&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;puts&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Hi, &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;#{&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;end&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;print_hi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'Tom'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;c1&quot;&gt;#=&amp;gt; prints 'Hi, Tom' to STDOUT.&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/figure&gt;
+&lt;div class=&quot;language-c++ highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;b&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;a&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;Check out the &lt;a href=&quot;https://jekyllrb.com/docs/home&quot;&gt;Jekyll docs&lt;/a&gt; for more info on how to get the most out of Jekyll. File all bugs/feature requests at &lt;a href=&quot;https://github.com/jekyll/jekyll&quot;&gt;Jekyll’s GitHub repo&lt;/a&gt;. If you have questions, you can ask them on &lt;a href=&quot;https://talk.jekyllrb.com/&quot;&gt;Jekyll Talk&lt;/a&gt;.&lt;/p&gt;</content><author><name></name></author><summary type="html">You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.</summary></entry><entry><title type="html">[回忆录] 写在创建之时</title><link href="http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%E5%9B%9E%E5%BF%86%E5%BD%95-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6.html" rel="alternate" type="text/html" title="[回忆录] 写在创建之时" /><published>2020-04-06T03:48:52+08:00</published><updated>2020-04-06T03:48:52+08:00</updated><id>http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%E3%80%90%E5%9B%9E%E5%BF%86%E5%BD%95%E3%80%91-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6</id><content type="html" xml:base="http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%E5%9B%9E%E5%BF%86%E5%BD%95-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6.html">&lt;p&gt;创建这样一个小博客的初衷是对不测明天的恐惧。今日和黑胖小明吃海底捞时突然讨论到有关老去，死亡和意外的话题。其中阿兹海默症，俗称老年痴呆这个病深深触动着我。对于”活着的意义是什么”这一问题的思考打从高中起一直伴随着我，虽然至今没有一份满意的答案。但是在每天日复一日平平无奇的每一天生活中，我能清楚的感受到快乐，兴奋，难受和感动。而这些看似细沙般微小的事情和来来往往进出我生活的人群，最终都将变成回忆存在我脑海这个超级大硬盘里。阿兹海默症意味着所有的记忆都被格式化，我的一切引以为傲的对这个世界的思考，一切对周遭人事的感动和感情，一切认真地，努力地，曾经如此想要出人头地，想要认真活着的那些一切，能够证明我是我的一切证据，都不复存在。这对我来说应该是比死亡更残酷的事情。因此，虽然目前为止没有任何迹象表明我有可能患上这种疾病，但我发现自己的记忆力真的差的惊人，对这种疾病的恐惧迫使我决定写一份回忆录，记录所有过去，现在我认为值得记录的人和事，只为记录，我是我。&lt;/p&gt;
+&lt;p&gt;上两行程序，第二行乘法必须在第一行读取操作完成之后进行。因此可以构建一个有向图，在这个有向图中，读取，储存，整数加减乘除，浮点数加减乘除分别有不同的时间延迟和吞吐量（即cpu支持并行执行的指令个数）。优化的目的是首先分析出原有代码的&lt;strong&gt;关键路径&lt;/strong&gt;，并对关键路径进行简化。&lt;/p&gt;
+
+&lt;p&gt;这些优化有一个重要的依据，即&lt;strong&gt;ILP&lt;/strong&gt;(Instruction Level Parallelism)，即代码指令并不是严格按照所写的顺序执行，相反，他们会被cpu硬件送入一个池子里，CPU每次选择没有依赖的指令执行，类似于拓扑排序。这一设计的结果是cpu仅按照有向图拓扑排序的顺序执行指令，而优化的目的也变成保证指令间相互依赖关系最小。&lt;/p&gt;
+
+&lt;p&gt;另一个需要注意的点是，编译器功能很强大，会一定程度上修改汇编指令层面的执行顺序，因此需要注意代码代码层面的优化不应该是那些编译器已经帮我们完成了的操作。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/404.html&quot;&gt;传送门&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;缓存读写优化&quot;&gt;缓存读写优化&lt;/h3&gt;
+
+&lt;p&gt;缓存读写优化的依据是，&lt;strong&gt;L1缓存&lt;/strong&gt;速度快，容量小，&lt;strong&gt;L2,L3缓存&lt;/strong&gt;次之，内存容量大，速度慢。因此我们希望尽可能多用&lt;strong&gt;L1缓存&lt;/strong&gt;，少用内存。而如果所有的数据读写位置是随机的，那么缓存读写优化就毫无意义，但实际上，大多数读写指令满足两个性质：&lt;strong&gt;temporal locality&lt;/strong&gt;和&lt;strong&gt;spatial locality&lt;/strong&gt;，前者指之前访问的数据过会儿还大概率会访问，后者指访问当前数据揭下来大概率会访问其相邻位置的数据，如数组。&lt;/p&gt;
+
+&lt;p&gt;因此，缓存读写优化的目的是尽可能把每个数据以及其相邻数据一次性处理完，从此再也不访问，完美利用上述亮点性质。这一般在多维数组中较常用，如矩阵乘法，图像处理等。&lt;/p&gt;
+
+&lt;p&gt;对于gpu而言，&lt;strong&gt;thread private memory&lt;/strong&gt;和&lt;strong&gt;shared memory&lt;/strong&gt;对cpu中的&lt;strong&gt;L1,L2缓存&lt;/strong&gt;，而&lt;strong&gt;global memory&lt;/strong&gt;对应内存，思路类似。&lt;/p&gt;
+
+&lt;p&gt;另外，内存的数据需要从硬盘读取，而这又涉及到分页的问题，不过这些相关问题一般不需要程序员自己优化，因此此处忽略。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/404.html&quot;&gt;传送门&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;并行优化&quot;&gt;并行优化&lt;/h3&gt;
+
+&lt;p&gt;并行优化这里只介绍_共享内存_和_消息传递_。&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;共享内存&lt;/em&gt; 即把一个大的共享内存划分成许多独立的小份并分别分配给每个线程运行。首先在任务负担均等的情况下，涉及到的一个主要问题是如何划分任务，使得对于&lt;strong&gt;缓存&lt;/strong&gt;读写最友好，&lt;em&gt;halide&lt;/em&gt;和最近爆火的&lt;em&gt;taichi&lt;/em&gt;很大程度上都在解决这一个问题。而当任务负载无法预测时，就需要利用&lt;strong&gt;内存池&lt;/strong&gt;合理分配任务。&lt;/p&gt;
+
+&lt;p&gt;另一个_共享内存_的问题是不同线程同时写入同个地址的时候，可能会发生&lt;strong&gt;race condition&lt;/strong&gt;，&lt;strong&gt;dead lock&lt;/strong&gt;和&lt;strong&gt;live lock&lt;/strong&gt;。这里就涉及到&lt;strong&gt;mutual mutex lock&lt;/strong&gt;的设计，&lt;strong&gt;memory model&lt;/strong&gt;的原理等。锁很复杂，常见情况是A发表论文说我发现了线程安全的锁，过几天B说A的设计有bug，需要这样修改，再过几天C再发表论文说B的设计有另一个bug，如此一直套娃。&lt;/p&gt;
+
+&lt;p&gt;本博客仅讨论作为一般的程序员，在运用已有的并行库时需要注意的事项和可能出错的点，更具体的有关多个&lt;strong&gt;内存池&lt;/strong&gt;之间&lt;strong&gt;stealing thread&lt;/strong&gt;，锁的设计，原子性的讨论，无锁数据结构的实现等等，可以参考&lt;a href=&quot;https://chenxiaowei.gitbook.io/cpp_concurrency_in_action/&quot;&gt;cpp concurrency in action&lt;/a&gt;。&lt;/p&gt;
+
+&lt;p&gt;_消息传递_这一主题主要出现在网络通信中，例如多个集群之间的通信，由于并不常用，本博客对其理解也较浅薄，仅介绍基础原理供参考，若有一日需要自己亲自解决多机并行等问题，再把详细内容补上。&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;/404.html&quot;&gt;传送门&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;讨论&quot;&gt;讨论&lt;/h3&gt;
+
+&lt;p&gt;优化代码路上最大的一个绊脚石是&lt;strong&gt;抽象&lt;/strong&gt;这一概念。&lt;strong&gt;抽象&lt;/strong&gt;把代码实现和表示分开，层级封装，使得代码的可读性和整体结构非常棒。但优化往往意味着降低可读性，破坏抽象。根据经验，我认为优化一定要为&lt;strong&gt;抽象&lt;/strong&gt;让道，即使付出额外的不需要的计算复杂度，也不可以破坏&lt;strong&gt;抽象&lt;/strong&gt;性。破坏的后果是代码可扩展性急剧变差，同时维护成本急剧提高，甚至最终无法维护。&lt;/p&gt;</content><author><name></name></author><summary type="html">“Premature optimization is the root of all evil.”</summary></entry><entry><title type="html">[回忆录] 写在创建之时</title><link href="http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%E5%9B%9E%E5%BF%86%E5%BD%95-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6.html" rel="alternate" type="text/html" title="[回忆录] 写在创建之时" /><published>2020-04-06T05:48:52+08:00</published><updated>2020-04-06T05:48:52+08:00</updated><id>http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%5B%E5%9B%9E%E5%BF%86%E5%BD%95%5D-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6</id><content type="html" xml:base="http://localhost:4000/%E5%9B%9E%E5%BF%86%E5%BD%95/2020/04/06/%E5%9B%9E%E5%BF%86%E5%BD%95-%E5%86%99%E5%9C%A8%E5%88%9B%E5%BB%BA%E4%B9%8B%E6%97%B6.html">&lt;p&gt;创建这样一个小博客的初衷是对不测明天的恐惧。今日和黑胖小明吃海底捞时突然讨论到有关老去，死亡和意外的话题。其中阿兹海默症，俗称老年痴呆这个病深深触动着我。对于”活着的意义是什么”这一问题的思考打从高中起一直伴随着我，虽然至今没有一份满意的答案。但是在每天日复一日平平无奇的每一天生活中，我能清楚的感受到快乐，兴奋，难受和感动。而这些看似细沙般微小的事情和来来往往进出我生活的人群，最终都将变成回忆存在我脑海这个超级大硬盘里。阿兹海默症意味着所有的记忆都被格式化，我的一切引以为傲的对这个世界的思考，一切对周遭人事的感动和感情，一切认真地，努力地，曾经如此想要出人头地，想要认真活着的那些一切，能够证明我是我的一切证据，都不复存在。这对我来说应该是比死亡更残酷的事情。因此，虽然目前为止没有任何迹象表明我有可能患上这种疾病，但我发现自己的记忆力真的差的惊人，对这种疾病的恐惧迫使我决定写一份回忆录，记录所有过去，现在我认为值得记录的人和事，只为记录，我是我。&lt;/p&gt;
 
 &lt;p&gt;不过对于开博客这件事情，还是经历了很多考量的。不出意外我希望这个博客能够存活很久很久，那么起初的博客设计就显得尤为重要，否则在进行到一半后想要弥补当初愚蠢的设计还是非常令人头痛的。抽象(abstract)思维是一切的基础。例如，一开始我只想将这个博客的范畴限在回忆录中，不过想到可能也会分享技术上的思考，兴趣爱好上的研究等，就只把它作为我的博客，而不加其他任何内容限制。不过很多的选择也着实困扰了我一会儿：&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;值不值得。为了一个小概率事件付出如此多的额外时间。在已经放假了两个月，闲的长蘑菇的我看来是完全值得的。但是以后工作繁忙，未必有时间和心思坚持下来。这涉及到博客存在的意义的问题，虽然网上都说写博客的人总是更优秀如何如何，我是不相信的，目前并未想到如何防止某日觉得一切不值得从而放弃写博客的办法，不过这件事应该还远，以后再说。&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;用git io还是自己租服务器然后用wordpress。其实我对网页方面的研究等于0，不过租服务器加域名只为一个博客似乎太浪费，同时服务器的安全性实在难以保证，另外wordpress会随着内容增加不断冗长并且变慢。虽然github未必能坚持几十年那么久，不过博文都用markdown的形式，移植起来很方便，综上目前选择git io，未来如果出现什么难以忍受的问题或许会再切换。&lt;/p&gt;
-  &lt;/li&gt;
+  &lt;li&gt;值不值得。为了一个小概率事件付出如此多的额外时间去做一件成就感很低且重复的事情。我是不太喜欢做一件无法获得任何信息量，也无法学到任何新知识的事情的，信息论的角度说，回忆录这件事情本身的熵为0。不过人的记忆有限，很多值得记忆的事情会随着时间忘却，因此，这个博客所记录的内容，很准确的定义是那些在未来会被遗忘的事情。&lt;/li&gt;
+  &lt;li&gt;用git io还是自己租服务器然后用wordpress。其实我对网页方面的研究等于0，不过租服务器加域名只为一个博客似乎太浪费，同时服务器的安全性实在难以保证，另外wordpress会随着内容增加不断冗长并且变慢。虽然github未必能坚持几十年那么久，不过博文都用markdown的形式，移植起来很方便，综上目前选择git io，未来如果出现什么难以忍受的问题或许会再切换。&lt;/li&gt;
   &lt;li&gt;回忆录是否公开。由于可能未来会有一些技术上的思考，公开意味着潜在的hr，未来的同事领导可能都看到这个回忆录，着实略显矫情，同时可能会在别的方面被别人评论好坏。所以决定一些文章就不push到远程。&lt;/li&gt;
   &lt;li&gt;对回忆录细粒度的把控。语文一直是我的弱项，我既认为生活虽然平淡不过习以为常的点滴小事都是幸福的来源，又怕把回忆录写成又臭又长的流水账，这是个很难决定的事情，往往很多事情乍看来这点小事有何可说。胡适日记每日内容，打牌，或许不太适合我。也许会一周或者一个月（或者更久）总结一下最值得记忆的事情，包括日复一日的小事，也包括不同寻常的大事。而是否收录的唯一准则是，这些内容对未来失忆的我重新认识我是否有帮助。&lt;/li&gt;
+  &lt;li&gt;回忆录的形式。编年体还是纪传体，这个主要涉及到未来检索时的难度，考虑到关键人物可以用关键字检索，而若用纪传体介绍，时间的概念或许会被淡化从而难以按照时间记录，因此会以编年体为主，不过也不乏会有专门记录某人的文章吧。&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;p&gt;今天应该是新冠病毒放假隔离2个多月以来最充实的一天。下午打篮球感觉自己运球突破很犀利，不过膝盖伤痛依然很影响发挥，膝盖伤痛从年前一次在租借球场打完球之后一直陪伴着我，希望快点好起来。晚上吃了心心念念已久的牛油锅，聊了很多天，开了很多玩笑，感觉很棒。后来玩了几把阿瓦隆，这个游戏我们玩到最后我都没彻底搞清楚逻辑关系点，不过和一位魔兽网友，也就是橘子的妹妹面基了，妹妹长得像菠萝赛东，有点呆萌。挺开心可以认识新的朋友，这一点对于一个内向话少的死宅来说是非常珍贵的。另外一个很重要的点是橘子三拒我们喊zlw一起来玩的请求，某种程度上意味着橘子亲自剪断了和zlw的所关联，以及未来的所有可能。橘子最终选择了一条与zlw互相平行的人生轨迹。不过倘若橘子再去约zlw吃饭或者和她再续前缘之类，那我必定要好好嘲讽一番他的猪一般的操作。&lt;/p&gt;
