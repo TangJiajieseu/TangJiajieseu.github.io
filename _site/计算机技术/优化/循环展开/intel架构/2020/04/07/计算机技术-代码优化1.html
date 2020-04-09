@@ -1,0 +1,1156 @@
+<!DOCTYPE html>
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1"><!-- Begin Jekyll SEO tag v2.6.1 -->
+<title>[计算机技术] 代码优化-线性代码优化 | 汤佳杰的博客</title>
+<meta name="generator" content="Jekyll v3.8.5" />
+<meta property="og:title" content="[计算机技术] 代码优化-线性代码优化" />
+<meta property="og:locale" content="en_US" />
+<meta name="description" content="“Premature optimization is the root of all evil.”" />
+<meta property="og:description" content="“Premature optimization is the root of all evil.”" />
+<link rel="canonical" href="http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80/intel%E6%9E%B6%E6%9E%84/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%961.html" />
+<meta property="og:url" content="http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80/intel%E6%9E%B6%E6%9E%84/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%961.html" />
+<meta property="og:site_name" content="汤佳杰的博客" />
+<meta property="og:type" content="article" />
+<meta property="article:published_time" content="2020-04-07T01:43:52+08:00" />
+<script type="application/ld+json">
+{"description":"“Premature optimization is the root of all evil.”","mainEntityOfPage":{"@type":"WebPage","@id":"http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80/intel%E6%9E%B6%E6%9E%84/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%961.html"},"@type":"BlogPosting","url":"http://localhost:4000/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80/intel%E6%9E%B6%E6%9E%84/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%961.html","headline":"[计算机技术] 代码优化-线性代码优化","dateModified":"2020-04-07T01:43:52+08:00","datePublished":"2020-04-07T01:43:52+08:00","@context":"https://schema.org"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="stylesheet" href="/assets/main.css"><link type="application/atom+xml" rel="alternate" href="http://localhost:4000/feed.xml" title="汤佳杰的博客" /></head>
+<body><header class="site-header" role="banner">
+
+  <div class="wrapper"><a class="site-title" rel="author" href="/">汤佳杰的博客</a><nav class="site-nav">
+        <input type="checkbox" id="nav-trigger" class="nav-trigger" />
+        <label for="nav-trigger">
+          <span class="menu-icon">
+            <svg viewBox="0 0 18 15" width="18px" height="15px">
+              <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"/>
+            </svg>
+          </span>
+        </label>
+
+        <div class="trigger"><a class="page-link" href="/about/">About</a></div>
+      </nav></div>
+</header>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+
+  <header class="post-header">
+    <h1 class="post-title p-name" itemprop="name headline">[计算机技术] 代码优化-线性代码优化</h1>
+    <p class="post-meta">
+      <time class="dt-published" datetime="2020-04-07T01:43:52+08:00" itemprop="datePublished">Apr 7, 2020
+      </time></p>
+  </header>
+
+  <div class="post-content e-content" itemprop="articleBody">
+    <blockquote>
+  <p>“Premature optimization is the root of all evil.”</p>
+</blockquote>
+
+<h2 id="概述">概述</h2>
+
+<p>本章详细介绍线性代码优化中的一些技巧，第一部分介绍常用的编程时应该注意的可能降低效率的一些注意点；第二部分介绍基于cpu架构进行优化的技巧，主要内容是循环展开相关的技巧；第三部分简述现代cpu常用的<strong>simd</strong>编程技术。另外介绍每一个点的时候会讨论为什么现代编译器不会帮我们做这些工作。</p>
+
+<p>由于所有的优化目标都是在不显著提高内存占用的前提下提高运行速度，代码优化的指标是<strong>CPE</strong>(cycles per element)，也就是每次循环迭代需要多少个计算机时钟周期，我的cpu型号是_Intel(R) Core(TM) i7-4770HQ CPU @ 2.20GHz_，对应的是_Haswell_微架构。每次个时钟周期为1/2.2纳秒。</p>
+
+<p>这里优化的例子原始版本非常简单，代码如下</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine1</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>即对一个整数或者浮点数类型的_vector_，将其中的元素按照_OP_（加法或乘法）运算把结果储存于dest中。朴素版本和开了一级编译优化的__CPE__如下表</p>
+
+<p>朴素版本的<strong>CPE</strong>如下表所示</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine1</td>
+      <td style="text-align: center">无</td>
+      <td style="text-align: center">15.5</td>
+      <td style="text-align: center">15.9</td>
+      <td style="text-align: center">15.8</td>
+      <td style="text-align: center">16.0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine1</td>
+      <td style="text-align: center">-O1</td>
+      <td style="text-align: center">7.3</td>
+      <td style="text-align: center">8.5</td>
+      <td style="text-align: center">7.3</td>
+      <td style="text-align: center">7.0</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>接下来的优化都会在<code class="language-plaintext highlighter-rouge">-O1</code>的基础上进行，并且分析为什么这样的优化不会被编译器执行。</p>
+
+<h3 id="常见编程优化">常见编程优化</h3>
+
+<h5 id="消除多余计算">消除多余计算</h5>
+
+<p>显然循环中的<code class="language-plaintext highlighter-rouge">vec_length(v)</code>这一函数的调用是多余的，将<code class="language-plaintext highlighter-rouge">length</code>的值在循环外一次求好，不需要反复调用，优化成如下</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine2</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>改进的<strong>CPE</strong>如下表</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine1</td>
+      <td style="text-align: center">-O1</td>
+      <td style="text-align: center">7.3</td>
+      <td style="text-align: center">8.5</td>
+      <td style="text-align: center">7.3</td>
+      <td style="text-align: center">7.0</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine2</td>
+      <td style="text-align: center">移除<code class="language-plaintext highlighter-rouge">vec_length</code></td>
+      <td style="text-align: center">4.8</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">6.5</td>
+      <td style="text-align: center">8.1</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>一个更极端的情况是在处理字符串<code class="language-plaintext highlighter-rouge">s</code>时，会有如下循环代码</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>for (i = 0; i &lt; strlen(s); ++i)
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">strlen(s)</code>的时间复杂度是<code class="language-plaintext highlighter-rouge">O(n)</code>，如果不把这一步移除循环，那么每次迭代都会额外浪费<code class="language-plaintext highlighter-rouge">O(n)</code>的时间。</p>
+
+<p>另一个需要讨论的问题是，为什么编译器不会帮我们优化？这是因为<code class="language-plaintext highlighter-rouge">vec_length</code>调用多少次会产生怎样的副作用是非常难以被编译器预测的，例如如果<code class="language-plaintext highlighter-rouge">vec_length</code>中有如下代码</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">static</span> <span class="n">a</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+<span class="n">a</span> <span class="o">+=</span> <span class="mi">1</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>那么这个函数调用次数不同就会导致不同的结果，而编译器很难预测函数调用次数不同会导致怎样的后果，因此不会对此进行优化。</p>
+
+<p>另外，为了减少函数调用，也可以将<code class="language-plaintext highlighter-rouge">get_vec_element</code>函数直接替换为对向量中数组的访问</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine3</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>改进后速度如下表</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine2</td>
+      <td style="text-align: center">移除<code class="language-plaintext highlighter-rouge">vec_length</code></td>
+      <td style="text-align: center">4.8</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">6.5</td>
+      <td style="text-align: center">8.1</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine3</td>
+      <td style="text-align: center">移除<code class="language-plaintext highlighter-rouge">get_vec_element</code></td>
+      <td style="text-align: center">4.8</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">7.6</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>速度并没有什么影响，主要是因为函数访问本身只增加常数级别的寄存器压栈和退栈操作。</p>
+
+<h4 id="移除不必要的内存访问">移除不必要的内存访问</h4>
+
+<p><code class="language-plaintext highlighter-rouge">combine3</code>中，每次循环里都会对<code class="language-plaintext highlighter-rouge">dest</code>进行一次读取和写入，而<code class="language-plaintext highlighter-rouge">dest</code>是一个内存地址，每次读取写入都会访问其对应的缓存，对内存的访问速度是远远慢于寄存器的访问的，因此可以用临时变量保存结果，最终将临时变量赋值给<code class="language-plaintext highlighter-rouge">dest</code>。另外<code class="language-plaintext highlighter-rouge">get_vec_element</code>也可以省去，对程序速度几乎没有影响，最终代码如下</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine4</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>改进后速度如下</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine3</td>
+      <td style="text-align: center">移除<code class="language-plaintext highlighter-rouge">get_vec_element</code></td>
+      <td style="text-align: center">4.8</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">6.0</td>
+      <td style="text-align: center">7.6</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine4</td>
+      <td style="text-align: center">临时变量保存结果</td>
+      <td style="text-align: center">0.7</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.2</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>可以见到，速度提升非常明显。(这里有一个我非常疑惑的点，理论上long add对应的汇编指令时延下限应该是1，long mul对应下限是3，double add对应是3，double mul对应是5，可是这里的结果似乎更像时延下限分别是1，2，2，3，我查阅了intel的<code class="language-plaintext highlighter-rouge">haswell</code>架构汇编指令时延并debug了各种情况都没有发现问题所在，欢迎有兴趣的小伙伴一起来讨论这个问题)。</p>
+
+<p>同样，为什么编译器不会帮我们做这一步的优化呢？这是因为，没有人能保证<code class="language-plaintext highlighter-rouge">dest</code>和<code class="language-plaintext highlighter-rouge">v</code>中元素的地址是否一致，换言之，如下两个代码的运行结果是不一样的</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">combine2</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+<span class="n">combine3</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[</span><span class="mi">2</span><span class="p">]);</span>
+</code></pre></div></div>
+
+<p>当dest的地址就是v中第二个元素地址时，结果显然不同。而编译器不会冒着有可能得到不同答案的风险去做优化。虽然看起来这个函数的目的是累加或者累乘，<code class="language-plaintext highlighter-rouge">combine3(v, &amp;v-&gt;data[2]);</code>的结果似乎更合理，但是编译器不应该去推测写这个程序的程序员写这个函数的目的。因此，我们可以人为的默认<code class="language-plaintext highlighter-rouge">dest</code>不会是<code class="language-plaintext highlighter-rouge">v</code>中元素的地址，并加以优化，而编译器则不能对此加以优化。</p>
+
+<hr />
+
+<h4 id="基于现代计算机架构的代码优化">基于现代计算机架构的代码优化</h4>
+
+<p>前面介绍了一些常见的编译器不会帮我们做的优化技巧，接下来如果想要进一步优化代码，就需要根据_target machine_的特性进行优化，这一节简单介绍现代intel的cpu的基本原理，作为接下来的优化：循环展开和simd的理论基础。</p>
+
+<p>当c或者c++代码被编译成机器码后，现代cpu会对重复的做下面几个事情：</p>
+
+<ol>
+  <li><em>fetch</em> &amp; decode。即读取当前行的机器码，并翻译成对应的操作，如对寄存器_rax_和_rbx_求和，读取或者写入内存地址等。</li>
+  <li><em>exec</em>。在这一步中，cpu每个时钟周期会读入多条可以执行的指令，并分配给对应的_functional units_，<em>functional units_可以看作cpu的核心劳动力，在<code class="language-plaintext highlighter-rouge">Haswell</code>架构中，一共有7个_functional units</em>，每个负责不同的任务。</li>
+  <li>commit。即将上一步的结果写入对应的内存或者寄存器中。</li>
+</ol>
+
+<p>上述只是个非常简单的cpu处理过程。每一步占用多个时钟周期。_Haswell_架构的各种基本运算的参数如下图所示</p>
+
+<p><img src="/_assets/opt-1/image-20200409233953078.png" alt="image-20200409233953078" /></p>
+
+<p>首先，<em>Latency</em> 代表每条指令需要多少个时钟周期完成。如整数加法_Latency_为1，但是上面说过每条cpu指令至少有3个阶段（实际中有10多个阶段），为什么_Latency_可以做到1呢？这是因为cpu有一个重要的<code class="language-plaintext highlighter-rouge">pipelining</code>的机制。例如有3个加法运算，他们互相执行顺序可以任意变换，那么在cpu中，当第一条指令执行完_fetch_，开始执行_decode_，第二条指令开始执行_fetch_，以此类推，每条指令距上条指令执行完只差了1个时钟周期，因此_Latency_是1。如果一个代码是完全<code class="language-plaintext highlighter-rouge">pipelined</code>，就是说这个代码每个时钟周期都可以开始一个新的运算，那么这个代码就无法在时延上进行优化了。</p>
+
+<p>_Issue_是指两条同样的指令开始之间的间隔，例如整数加法，第一条整数加法指令执行1个时钟周期后，即使他还没有完成，下一条整数加法指令就可以继续执行。</p>
+
+<p>_Capacity_是指对于每种指令，一共有多少个打工仔，也就是_functional units_可以执行他。例如有4个整数加法可以同时执行，而整数除法每次只能执行一条指令，也就是说必须要等上一条整数除法指令执行完，才能开始执行下一条整数除法指令，因此，他的时延就是他的执行时间，3-30，而Issue也是他的执行时间。</p>
+
+<p>一种更常见的表达_Issue_和_Capacity_的方式是最大吞吐量，<em>throughput</em>，他的定义是_Capacity_/<em>Issue</em>，含义是每个时钟周期可以执行多少条这个指令，而他的倒数表示最好情况下每条指令所需的时钟周期。</p>
+
+<p>由此，可以得到这些基本运算的时延下限和吞吐量下限，单位为时钟周期，如下表所示</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine4</td>
+      <td style="text-align: center">临时变量保存结果</td>
+      <td style="text-align: center">0.7</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Latency bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Throughput bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">0.5</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>这里需要注意为什么Throughput bound对于__long add__是0.5而不是0.25，这是因为每次<strong>add</strong>会对两个变量进行内存读取，而一共有2个单元有内存读取的功能，因此每个时钟周期最多只能读取2个元素，因此读取操作限制了吞吐量下限至少为0.5。（这里combine4的结果有点太好，我目前还没理解为什么）</p>
+
+<p>回到combine4的代码，我们可以将机器码转换成数据流的形式，首先combine4的循环对应的汇编代码如下</p>
+
+<pre><code class="language-asm">data_t = long, OP = *, %eax 保存acc, %rdx保存data+i的地址，%rcx保存data+len的地址
+.L25:  														循环
+    imull   (%rdx), %eax					data[i] * acc
+    addq    $4, %rdx							data地址递增
+    cmpq    %rcx, %rdx						比较边界
+    jne .L25											继续循环
+</code></pre>
+
+<p>指令之间的依赖关系如下图</p>
+
+<p><img src="/_assets/opt-1/opt_diag_1.svg" alt="opt_diag_1" /></p>
+
+<p>cpu执行代码时会根据这样的拓扑图进行执行，对于没有拓扑先后顺序的指令，不保证其运行先后顺序。可以分析出，左边加粗的路径做整数乘法，每一步时延为3，总时延为$3n$，而右边的路径做整数加法，时延为$n$。因此，左边的加粗线为_关键路径_（<em>critical path</em>），因此可以分析出，对于整数乘法，其<strong>CPE</strong>至少为3。（为啥我的实验结果是2）</p>
+
+<h4 id="循环展开">循环展开</h4>
+
+<p>循环展开就是指减少循环总次数，而在每次循环里把原来多次的循环计算展开成序列化的操作，从而减少每次迭代之间的相互依赖性，不多说，直接上代码</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine5</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">;</span><span class="n">i</span><span class="o">+=</span><span class="mi">2</span><span class="p">){</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>可以见到，循环现在变成原来的一半，而每次循环计算原先两次对应的操作，这里称作2x1循环展开，第一个2代表每个循环里做原来2倍的操作，1代表只使用1个临时变量，<strong>CPE</strong>如下</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine4</td>
+      <td style="text-align: center">临时变量保存结果</td>
+      <td style="text-align: center">0.7</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.2</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine5</td>
+      <td style="text-align: center">2x1循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Latency bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Throughput bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">0.5</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>可以见到结果并没有变好，为什么呢，继续分析数据流如下图</p>
+
+<p><img src="/_assets/opt-1/opt_diag_2.svg" alt="opt_diag_2" /></p>
+
+<p>这条粗的_关键路径_依然是$n$个乘法组成，并没有减少。</p>
+
+<p>一个自然的想法是在每次循环里只有一个乘法操作在关键路径上，而将另一个乘法操作放在另外的路径上，自然的想法是，因为这条关键路径主要是<code class="language-plaintext highlighter-rouge">acc</code>的变化需要序列化，那么可以再用一个临时变量，储存<code class="language-plaintext highlighter-rouge">data[i+1]</code>的累积结果，代码如下</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine6</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc0</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc1</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">;</span><span class="n">i</span><span class="o">+=</span><span class="mi">2</span><span class="p">){</span>
+        <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">acc1</span> <span class="o">=</span> <span class="n">acc1</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc0</span> <span class="n">OP</span> <span class="n">acc1</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里使用了<code class="language-plaintext highlighter-rouge">acc0</code>存储<code class="language-plaintext highlighter-rouge">data[i]</code>的累积结果，<code class="language-plaintext highlighter-rouge">acc1</code>存储<code class="language-plaintext highlighter-rouge">data[i+1]</code>的累积结果，此时，数据流变成如下图</p>
+
+<p><img src="/_assets/opt-1/opt_diag_3.svg" alt="opt_diag_3" /></p>
+
+<p>左边的粗线代表<code class="language-plaintext highlighter-rouge">acc0</code>，中间的代表<code class="language-plaintext highlighter-rouge">acc1</code>，这样每条粗线代表$n/2$次乘法，<strong>CPE</strong>如下</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine5</td>
+      <td style="text-align: center">2x1循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine6</td>
+      <td style="text-align: center">2x2循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">1.0</td>
+      <td style="text-align: center">1.5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Latency bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Throughput bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">0.5</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>可以见到，除了整数加法外别的结果都好了一倍左右，除了整数加法。这是因为循环本身有太多的负载。</p>
+
+<p>另一个对combine5优化的方案是改变运算顺序，先计算<code class="language-plaintext highlighter-rouge">data[i] OP data[i+1]</code>，这一步因为不是关键路径，可以同时和<code class="language-plaintext highlighter-rouge">acc</code>的计算并行，从而达到优化，代码如下</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="nf">combine7</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">;</span><span class="n">i</span><span class="o">+=</span><span class="mi">2</span><span class="p">){</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>对应的数据流如下</p>
+
+<p><img src="/_assets/opt-1/opt_diag_4.svg" alt="opt_diag_4" /></p>
+
+<p>可见，这种方法和combine5一样可以使得_关键路径_变为原来的一半，对应的<strong>CPE</strong>为</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine5</td>
+      <td style="text-align: center">2x1循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">1.9</td>
+      <td style="text-align: center">3.4</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine6</td>
+      <td style="text-align: center">2x2循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">1.0</td>
+      <td style="text-align: center">1.5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">combine7</td>
+      <td style="text-align: center">2x1a循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">2.2</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">1.5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Latency bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Throughput bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">0.5</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><strong>double</strong>类型的结果和combine6类似，但是这里<strong>long mul</strong>的结果不符合预期，这里也是我疑惑的一个点，先放这里，想明白了再回来补充。</p>
+
+<p>循环展开并不是展开的越多，结果越好。这是因为存在_Register Spilling_的问题，就是说_x86_64_架构一共有16个整数寄存器，当临时变量的个数超过16个，那么就需要将临时变量储存在内存中，而这种操作显然是非常耗时的。另外因为cpu本身有吞吐量限制，所以循环展开并不是越多越好。</p>
+
+<h4 id="simd">SIMD</h4>
+
+<p>SIMD即<strong>single instruction multiple data</strong>，就是一种向量化的编程方式，原理是把一个向量存储在超大的向量寄存器里（SSE2为16bytes, AVX为32bytes），然后对这个寄存器进行一次性的操作，在硬件上实现加速。例如，_x86_64_架构中有16个向量寄存器，<code class="language-plaintext highlighter-rouge">%ymm0</code>-<code class="language-plaintext highlighter-rouge">ymm15</code>，每个寄存器长度为32bytes，可以存放8个<code class="language-plaintext highlighter-rouge">int</code>型数据，然后可以对这个寄存器直接进行向量的加减乘除。不多说，上代码</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#define VBYTES 32
+</span>
+<span class="cm">/* Number of elements in a vector */</span>
+<span class="cp">#define VSIZE VBYTES/sizeof(data_t)
+</span><span class="cm">/* $end simd_vec_sizes */</span>
+
+<span class="cm">/* $begin simd_vec_t */</span>
+<span class="cm">/* Vector data type */</span>
+<span class="k">typedef</span> <span class="n">data_t</span> <span class="n">vec_t</span> <span class="nf">__attribute__</span> <span class="p">((</span><span class="n">vector_size</span><span class="p">(</span><span class="n">VBYTES</span><span class="p">)));</span>
+
+<span class="kt">char</span> <span class="n">simd_v1_descr</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"simd_v1: SSE code, 1*VSIZE-way parallelism"</span><span class="p">;</span>
+<span class="cm">/* $begin simd_combine-c */</span>
+<span class="kt">void</span> <span class="nf">simd_v1_combine</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span>
+<span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">vec_t</span> <span class="n">accum</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="n">result</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Initialize all accum entries to IDENT */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="c1">//line:opt:simd:initstart</span>
+    	<span class="n">accum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>  <span class="c1">//line:opt:simd:initend</span>
+
+    <span class="cm">/* Single step until have memory alignment */</span>
+    <span class="k">while</span> <span class="p">((((</span><span class="kt">size_t</span><span class="p">)</span> <span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="n">VBYTES</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">//line:opt:simd:startstart</span>
+    	<span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="n">OP</span> <span class="o">*</span><span class="n">data</span><span class="o">++</span><span class="p">;</span>
+    	<span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span>                              <span class="c1">//line:opt:simd:startend</span>
+
+    <span class="cm">/* Step through data with VSIZE-way parallelism */</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">&gt;=</span> <span class="n">VSIZE</span><span class="p">)</span> <span class="p">{</span>    <span class="c1">//line:opt:simd:loopstart</span>
+    	<span class="n">vec_t</span> <span class="n">chunk</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">);</span>
+    	<span class="n">accum</span> <span class="o">=</span> <span class="n">accum</span> <span class="n">OP</span> <span class="n">chunk</span><span class="p">;</span>
+    	<span class="n">data</span> <span class="o">+=</span> <span class="n">VSIZE</span><span class="p">;</span>
+    	<span class="n">cnt</span> <span class="o">-=</span> <span class="n">VSIZE</span><span class="p">;</span>
+    <span class="p">}</span> <span class="c1">//line:opt:simd:loopend</span>
+
+    <span class="cm">/* Single-step through remaining elements */</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//line:opt:simd:loopfinishstart</span>
+    	<span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="n">OP</span> <span class="o">*</span><span class="n">data</span><span class="o">++</span><span class="p">;</span>
+    	<span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span> <span class="c1">//line:opt:simd:loopfinishend</span>
+
+    <span class="cm">/* Combine elements of accumulator vector */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="c1">//line:opt:simd:accumfinishstart</span>
+    	<span class="n">result</span> <span class="o">=</span> <span class="n">result</span> <span class="n">OP</span> <span class="n">accum</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">//line:opt:simd:accumfinishend</span>
+
+    <span class="cm">/* Store result */</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>这里用</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">typedef</span> <span class="n">data_t</span> <span class="n">vec_t</span> <span class="nf">__attribute__</span> <span class="p">((</span><span class="n">vector_size</span><span class="p">(</span><span class="n">VBYTES</span><span class="p">)));</span>
+</code></pre></div></div>
+
+<p>声明了一个向量的类型用来存储临时变量，每次迭代时，通过</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">vec_t</span> <span class="n">chunk</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>将当前数组转换成向量，然后直接通过</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code>    <span class="n">accum</span> <span class="o">=</span> <span class="n">accum</span> <span class="n">OP</span> <span class="n">chunk</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>进行向量的<code class="language-plaintext highlighter-rouge">OP</code>运算。</p>
+
+<p>有一点需要注意的是，转换成向量的数组，初始地址必须是32bytes对齐的，这样可以提高读取速度，这里对齐的主要原因是，cpu读取内存的时候都是按照字读取的，也就是说每次读取64位长的内容，如果不对齐的话就需要对64位长的数据进行分割，增加负担。如果想要让<code class="language-plaintext highlighter-rouge">data</code>数据类型一开始就保证对齐，可以用如下声明</p>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">data_t</span> <span class="n">data</span><span class="p">[</span><span class="n">N</span><span class="p">]</span> <span class="n">__attribute</span><span class="p">((</span><span class="n">aligned</span><span class="p">(</span><span class="mi">32</span><span class="p">)));</span>
+</code></pre></div></div>
+
+<p>括号里为对应的对齐的字节。</p>
+
+<p>另外，intel提供了SSE和AVX的指令集，用法和上述方法类似，不过是定义不同，详见<a href="https://software.intel.com/sites/landingpage/IntrinsicsGuide/">IntrinsicsGuide</a>。</p>
+
+<p><strong>CPE</strong>如下所示，另外还提供了将smid进行8x8循环展开的结果。详细代码见最后</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: center">函数</th>
+      <th style="text-align: center">选项</th>
+      <th style="text-align: center">long add</th>
+      <th style="text-align: center">long mul</th>
+      <th style="text-align: center">double add</th>
+      <th style="text-align: center">double mul</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: center">combine6</td>
+      <td style="text-align: center">2x2循环展开</td>
+      <td style="text-align: center">0.65</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">1.0</td>
+      <td style="text-align: center">1.5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">smid_v1</td>
+      <td style="text-align: center">smid</td>
+      <td style="text-align: center">0.26</td>
+      <td style="text-align: center">1.5</td>
+      <td style="text-align: center">0.52</td>
+      <td style="text-align: center">0.9</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">smid_v8</td>
+      <td style="text-align: center">smid+8x8展开</td>
+      <td style="text-align: center">0.13</td>
+      <td style="text-align: center">0.9</td>
+      <td style="text-align: center">0.26</td>
+      <td style="text-align: center">0.26</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Latency bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">3</td>
+      <td style="text-align: center">5</td>
+    </tr>
+    <tr>
+      <td style="text-align: center">Throughput bound</td>
+      <td style="text-align: center"> </td>
+      <td style="text-align: center">0.5</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">1</td>
+      <td style="text-align: center">0.5</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4 id="后记">后记</h4>
+
+<p>至此，一些基本的线性代码优化已经完成，有几点需要补充说明。</p>
+
+<p>一是代码的正确性，需要保证在优化后代码依然正确，但是很多时候优化所带来的bug是很难被发现的，例如循环展开导致的浮点数计算误差，或者边界条件的欠考虑等，需要进行大量的测试来保障优化的正确性。</p>
+
+<p>另一个是<strong>分支预测</strong>，在遇到判断语句时，cpu不会等到判断表达式的结果出来再去跳转分支，而是直接先运行<code class="language-plaintext highlighter-rouge">if</code>后面的分支，如果发现这个分支不正确，则取消这个分支上的所有计算，这个代价是很大的，所以在写代码时需要尽量将可能走的分支写在前面。</p>
+
+<p>还有<strong>profile</strong>的问题，众所周知，检查内存泄漏可以使用</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>valgrind <span class="nt">--tool</span><span class="o">=</span>memcheck ./a.out
+</code></pre></div></div>
+
+<p>而<strong>profile</strong>代码在linux上可以使用</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>gprof ./a.out
+</code></pre></div></div>
+
+<p>在mac上我发现clion自带的profiler也是很好用的。</p>
+
+<h4 id="参考文献">参考文献</h4>
+
+<p><a href="[http://csapp.cs.cmu.edu/](http://csapp.cs.cmu.edu/)">csapp第五章</a></p>
+
+<h3 id="完整代码">完整代码</h3>
+
+<div class="language-c++ highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include &lt;iostream&gt;
+#include &lt;chrono&gt;
+#include &lt;cstdlib&gt;
+#include &lt;ctime&gt;
+</span><span class="k">using</span> <span class="k">namespace</span> <span class="n">std</span><span class="p">;</span>
+<span class="cp">#define CLKT CLOCK_THREAD_CPUTIME_ID
+</span>
+<span class="cp">#define MHZ 2.2
+</span><span class="c1">//#define N 10000000</span>
+<span class="kt">int</span> <span class="n">N</span><span class="p">;</span>
+
+<span class="cp">#ifdef LONG
+</span><span class="k">typedef</span> <span class="kt">long</span>    <span class="n">data_t</span><span class="p">;</span>
+<span class="cp">#define TYPENAME "long"
+#endif
+</span>
+<span class="cp">#ifdef DOUBLE
+</span><span class="k">typedef</span> <span class="kt">double</span> <span class="n">data_t</span><span class="p">;</span>
+<span class="cp">#define TYPENAME "double"
+#endif
+</span>
+<span class="cp">#ifdef SUM
+#define OP +
+#define IDENT 0
+#define OPNAME "sum"
+#endif 
+</span>
+<span class="cp">#ifdef PROD
+#define OP *
+#define IDENT 1
+#define OPNAME "product"
+#endif
+</span>
+<span class="k">typedef</span> <span class="k">struct</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">len</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span><span class="p">;</span>
+<span class="p">}</span> <span class="n">vec_rec</span><span class="p">,</span> <span class="o">*</span><span class="n">vec_ptr</span><span class="p">;</span>
+
+<span class="kt">int</span> <span class="nf">get_vec_element</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="kt">long</span> <span class="n">index</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">index</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="o">||</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">len</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[</span><span class="n">index</span><span class="p">];</span>
+    <span class="k">return</span> <span class="mi">1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">long</span> <span class="nf">vec_length</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">return</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">len</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine1_desc</span> <span class="o">=</span> <span class="s">"combine1, Maximum use of data abstraction"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine1</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine2_desc</span> <span class="o">=</span> <span class="s">"combine2, Move vec_length out of loop"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine2</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+        <span class="n">get_vec_element</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">val</span><span class="p">;</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine3_desc</span> <span class="o">=</span> <span class="s">"combine3, Array reference to data"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine3</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="o">*</span><span class="n">dest</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine4_desc</span> <span class="o">=</span> <span class="s">"combine4, Accumulate in temporary variable"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine4</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span> 
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cm">/* 2 x 1 loop unrolling */</span>
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine5_desc</span> <span class="o">=</span> <span class="s">"combine5, 2 x 1 loop unrolling"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine5</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span><span class="p">(</span><span class="n">i</span><span class="o">=</span><span class="mi">0</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;</span><span class="n">limit</span><span class="p">;</span><span class="n">i</span><span class="o">+=</span><span class="mi">2</span><span class="p">){</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="p">(</span><span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span> <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine6_desc</span> <span class="o">=</span> <span class="s">"combine6, 2 x 2 loop unrolling"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine6</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc0</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc1</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span>
+        <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+        <span class="n">acc1</span> <span class="o">=</span> <span class="n">acc1</span>
+        <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc0</span> <span class="o">=</span> <span class="n">acc0</span>
+        <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc0</span>
+    <span class="n">OP</span> <span class="n">acc1</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="o">*</span><span class="n">combine7_desc</span> <span class="o">=</span> <span class="s">"combine7, 2 x 1 loop unrolling, reassociated"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">combine7</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">length</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="kt">long</span> <span class="n">limit</span> <span class="o">=</span> <span class="n">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">acc</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Combine 2 elements at a time */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">limit</span><span class="p">;</span> <span class="n">i</span> <span class="o">+=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span>
+        <span class="n">OP</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">OP</span>
+        <span class="n">data</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="p">}</span>
+
+    <span class="cm">/* Finish any remaining elements */</span>
+    <span class="k">for</span> <span class="p">(;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">length</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">acc</span> <span class="o">=</span> <span class="n">acc</span>
+        <span class="n">OP</span> <span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="p">}</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">acc</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="cp">#define VBYTES 32
+</span>
+<span class="cm">/* Number of elements in a vector */</span>
+<span class="cp">#define VSIZE VBYTES/sizeof(data_t)
+</span><span class="cm">/* $end simd_vec_sizes */</span>
+
+<span class="cm">/* $begin simd_vec_t */</span>
+<span class="cm">/* Vector data type */</span>
+<span class="k">typedef</span> <span class="n">data_t</span> <span class="n">vec_t</span> <span class="nf">__attribute__</span> <span class="p">((</span><span class="n">vector_size</span><span class="p">(</span><span class="n">VBYTES</span><span class="p">)));</span>
+
+<span class="kt">char</span> <span class="n">simd_v1_descr</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"simd_v1: SSE code, 1*VSIZE-way parallelism"</span><span class="p">;</span>
+<span class="cm">/* $begin simd_combine-c */</span>
+<span class="kt">void</span> <span class="nf">simd_v1_combine</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">vec_t</span> <span class="n">accum</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="n">result</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Initialize all accum entries to IDENT */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="c1">//line:opt:simd:initstart</span>
+        <span class="n">accum</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>  <span class="c1">//line:opt:simd:initend</span>
+
+    <span class="cm">/* Single step until have memory alignment */</span>
+    <span class="k">while</span> <span class="p">((((</span><span class="kt">size_t</span><span class="p">)</span> <span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="n">VBYTES</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>  <span class="c1">//line:opt:simd:startstart</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">OP</span> <span class="o">*</span> <span class="n">data</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span>                              <span class="c1">//line:opt:simd:startend</span>
+
+    <span class="cm">/* Step through data with VSIZE-way parallelism */</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">&gt;=</span> <span class="n">VSIZE</span><span class="p">)</span> <span class="p">{</span>    <span class="c1">//line:opt:simd:loopstart</span>
+        <span class="n">vec_t</span> <span class="n">chunk</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">);</span>
+        <span class="n">accum</span> <span class="o">=</span> <span class="n">accum</span>
+        <span class="n">OP</span> <span class="n">chunk</span><span class="p">;</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="n">VSIZE</span><span class="p">;</span>
+        <span class="n">cnt</span> <span class="o">-=</span> <span class="n">VSIZE</span><span class="p">;</span>
+    <span class="p">}</span> <span class="c1">//line:opt:simd:loopend</span>
+
+    <span class="cm">/* Single-step through remaining elements */</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span><span class="p">)</span> <span class="p">{</span> <span class="c1">//line:opt:simd:loopfinishstart</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">OP</span> <span class="o">*</span> <span class="n">data</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span> <span class="c1">//line:opt:simd:loopfinishend</span>
+
+    <span class="cm">/* Combine elements of accumulator vector */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="c1">//line:opt:simd:accumfinishstart</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="n">OP</span> <span class="n">accum</span><span class="p">[</span><span class="n">i</span><span class="p">];</span> <span class="c1">//line:opt:simd:accumfinishend</span>
+
+    <span class="cm">/* Store result */</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+<span class="kt">char</span> <span class="n">simd_v8_descr</span><span class="p">[]</span> <span class="o">=</span> <span class="s">"simd_v8: SSE code, 8*VSIZE-way parallelism"</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">simd_v8_combine</span><span class="p">(</span><span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="n">data_t</span> <span class="o">*</span><span class="n">dest</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="n">vec_t</span> <span class="n">accum0</span><span class="p">,</span> <span class="n">accum1</span><span class="p">,</span> <span class="n">accum2</span><span class="p">,</span> <span class="n">accum3</span><span class="p">,</span> <span class="n">accum4</span><span class="p">,</span> <span class="n">accum5</span><span class="p">,</span> <span class="n">accum6</span><span class="p">,</span> <span class="n">accum7</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="o">*</span><span class="n">data</span> <span class="o">=</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">cnt</span> <span class="o">=</span> <span class="n">vec_length</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+    <span class="n">data_t</span> <span class="n">result</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+
+    <span class="cm">/* Initialize accum to IDENT */</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">accum0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">IDENT</span><span class="p">;</span>
+    <span class="n">accum1</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum2</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum3</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum4</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum5</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum6</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+    <span class="n">accum7</span> <span class="o">=</span> <span class="n">accum0</span><span class="p">;</span>
+
+    <span class="cm">/* Single step until have memory alignment */</span>
+    <span class="k">while</span> <span class="p">((((</span><span class="kt">size_t</span><span class="p">)</span> <span class="n">data</span><span class="p">)</span> <span class="o">%</span> <span class="n">VBYTES</span><span class="p">)</span> <span class="o">!=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">OP</span> <span class="o">*</span> <span class="n">data</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span>                              <span class="c1">//line:opt:simd:startend</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span> <span class="o">&gt;=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">vec_t</span> <span class="n">chunk0</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="n">data</span><span class="p">);</span>
+        <span class="n">vec_t</span> <span class="n">chunk1</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk2</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk3</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">3</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk4</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk5</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">5</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk6</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">vec_t</span> <span class="n">chunk7</span> <span class="o">=</span> <span class="o">*</span><span class="p">((</span><span class="n">vec_t</span> <span class="o">*</span><span class="p">)</span> <span class="p">(</span><span class="n">data</span> <span class="o">+</span> <span class="mi">7</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">));</span>
+        <span class="n">accum0</span> <span class="o">=</span> <span class="n">accum0</span>
+        <span class="n">OP</span> <span class="n">chunk0</span><span class="p">;</span>
+        <span class="n">accum1</span> <span class="o">=</span> <span class="n">accum1</span>
+        <span class="n">OP</span> <span class="n">chunk1</span><span class="p">;</span>
+        <span class="n">accum2</span> <span class="o">=</span> <span class="n">accum2</span>
+        <span class="n">OP</span> <span class="n">chunk2</span><span class="p">;</span>
+        <span class="n">accum3</span> <span class="o">=</span> <span class="n">accum3</span>
+        <span class="n">OP</span> <span class="n">chunk3</span><span class="p">;</span>
+        <span class="n">accum4</span> <span class="o">=</span> <span class="n">accum4</span>
+        <span class="n">OP</span> <span class="n">chunk4</span><span class="p">;</span>
+        <span class="n">accum5</span> <span class="o">=</span> <span class="n">accum5</span>
+        <span class="n">OP</span> <span class="n">chunk5</span><span class="p">;</span>
+        <span class="n">accum6</span> <span class="o">=</span> <span class="n">accum6</span>
+        <span class="n">OP</span> <span class="n">chunk6</span><span class="p">;</span>
+        <span class="n">accum7</span> <span class="o">=</span> <span class="n">accum7</span>
+        <span class="n">OP</span> <span class="n">chunk7</span><span class="p">;</span>
+        <span class="n">data</span> <span class="o">+=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">;</span>
+        <span class="n">cnt</span> <span class="o">-=</span> <span class="mi">8</span> <span class="o">*</span> <span class="n">VSIZE</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="k">while</span> <span class="p">(</span><span class="n">cnt</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+        <span class="n">OP</span> <span class="o">*</span> <span class="n">data</span><span class="o">++</span><span class="p">;</span>
+        <span class="n">cnt</span><span class="o">--</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">accum0</span> <span class="o">=</span> <span class="p">(</span><span class="n">accum0</span>
+    <span class="n">OP</span>
+    <span class="n">accum1</span><span class="p">)</span> <span class="n">OP</span><span class="p">(</span><span class="n">accum2</span>
+    <span class="n">OP</span>
+    <span class="n">accum3</span><span class="p">);</span>
+    <span class="n">accum0</span> <span class="o">=</span> <span class="n">accum0</span>
+    <span class="n">OP</span><span class="p">(</span><span class="n">accum4</span>
+    <span class="n">OP</span>
+    <span class="n">accum5</span><span class="p">)</span> <span class="n">OP</span><span class="p">(</span><span class="n">accum6</span>
+    <span class="n">OP</span>
+    <span class="n">accum7</span><span class="p">);</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">VSIZE</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">result</span>
+    <span class="n">OP</span> <span class="n">accum0</span><span class="p">[</span><span class="n">i</span><span class="p">];</span>
+    <span class="o">*</span><span class="n">dest</span> <span class="o">=</span> <span class="n">result</span><span class="p">;</span>
+<span class="p">}</span>
+
+
+<span class="k">template</span><span class="o">&lt;</span><span class="k">typename</span> <span class="n">Func</span><span class="o">&gt;</span>
+<span class="kt">void</span> <span class="nf">profile</span><span class="p">(</span><span class="n">Func</span> <span class="n">combine</span><span class="p">,</span> <span class="n">vec_ptr</span> <span class="n">v</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">str</span><span class="p">)</span> <span class="p">{</span>
+    <span class="kt">double</span> <span class="n">CPE_best</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">,</span> <span class="n">CPE</span><span class="p">,</span> <span class="n">chrono_best</span> <span class="o">=</span> <span class="mf">1e10</span><span class="p">;</span>
+    <span class="n">data_t</span> <span class="n">val</span><span class="p">;</span>
+    <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="mi">20</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="k">auto</span> <span class="n">start</span> <span class="o">=</span> <span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+        <span class="n">combine</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">val</span><span class="p">);</span>
+        <span class="k">auto</span> <span class="n">end</span> <span class="o">=</span> <span class="n">chrono</span><span class="o">::</span><span class="n">system_clock</span><span class="o">::</span><span class="n">now</span><span class="p">();</span>
+        <span class="n">chrono</span><span class="o">::</span><span class="n">duration</span><span class="o">&lt;</span><span class="kt">double</span><span class="o">&gt;</span> <span class="n">diff</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">start</span><span class="p">;</span>
+        <span class="n">chrono_best</span> <span class="o">=</span> <span class="n">diff</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">/</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">*</span> <span class="mf">2.2</span> <span class="o">*</span> <span class="mf">1e9</span> <span class="o">&lt;</span> <span class="n">chrono_best</span> <span class="o">?</span> <span class="n">diff</span><span class="p">.</span><span class="n">count</span><span class="p">()</span> <span class="o">/</span> <span class="n">v</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">*</span> <span class="mf">2.2</span> <span class="o">*</span> <span class="mf">1e9</span> <span class="o">:</span> <span class="n">chrono_best</span><span class="p">;</span>
+    <span class="p">}</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="n">str</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"type:</span><span class="se">\t\t</span><span class="s">"</span> <span class="o">&lt;&lt;</span> <span class="n">TYPENAME</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"operation :</span><span class="se">\t</span><span class="s">"</span> <span class="o">&lt;&lt;</span> <span class="n">OPNAME</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+    <span class="n">cout</span> <span class="o">&lt;&lt;</span> <span class="s">"chrono CPE:</span><span class="se">\t\t</span><span class="s">"</span> <span class="o">&lt;&lt;</span> <span class="n">chrono_best</span> <span class="o">&lt;&lt;</span> <span class="n">endl</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="n">rand</span><span class="p">();</span>
+    <span class="n">vec_ptr</span> <span class="n">v</span> <span class="o">=</span> <span class="p">(</span><span class="n">vec_ptr</span><span class="p">)</span> <span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="n">vec_rec</span><span class="p">));</span>
+    <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span> <span class="o">=</span> <span class="p">(</span><span class="n">data_t</span> <span class="o">*</span><span class="p">)</span> <span class="n">calloc</span><span class="p">(</span><span class="n">N</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="n">data_t</span><span class="p">));</span>
+    <span class="n">v</span><span class="o">-&gt;</span><span class="n">len</span> <span class="o">=</span> <span class="n">N</span><span class="p">;</span>
+    <span class="kt">long</span> <span class="n">i</span><span class="p">;</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">N</span><span class="p">;</span> <span class="o">++</span><span class="n">i</span><span class="p">)</span> <span class="p">{</span>
+        <span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="k">static_cast</span><span class="o">&lt;</span><span class="n">data_t</span><span class="o">&gt;</span><span class="p">(</span><span class="n">i</span> <span class="o">%</span> <span class="mi">10</span><span class="p">);</span>
+    <span class="p">}</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine1</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine1_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine2</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine2_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine3</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine3_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine4</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine4_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine5</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine5_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine6</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine6_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">combine7</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">combine7_desc</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">simd_v1_combine</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">simd_v1_descr</span><span class="p">);</span>
+    <span class="n">profile</span><span class="p">(</span><span class="n">simd_v8_combine</span><span class="p">,</span> <span class="n">v</span><span class="p">,</span> <span class="n">simd_v8_descr</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">v</span><span class="o">-&gt;</span><span class="n">data</span><span class="p">);</span>
+    <span class="n">free</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+
+  </div><a class="u-url" href="/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF/%E4%BC%98%E5%8C%96/%E5%BE%AA%E7%8E%AF%E5%B1%95%E5%BC%80/intel%E6%9E%B6%E6%9E%84/2020/04/07/%E8%AE%A1%E7%AE%97%E6%9C%BA%E6%8A%80%E6%9C%AF-%E4%BB%A3%E7%A0%81%E4%BC%98%E5%8C%961.html" hidden></a>
+</article>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+
+    <h2 class="footer-heading">汤佳杰的博客</h2>
+
+    <div class="footer-col-wrapper">
+      <div class="footer-col footer-col-1">
+        <ul class="contact-list">
+          <li class="p-name">汤佳杰的博客</li></ul>
+      </div>
+
+      <div class="footer-col footer-col-2"><ul class="social-media-list"><li><a href="https://github.com/Tangjiajieseu"><svg class="svg-icon"><use xlink:href="/assets/minima-social-icons.svg#github"></use></svg> <span class="username">Tangjiajieseu</span></a></li></ul>
+</div>
+
+      <div class="footer-col footer-col-3">
+        <p>无言</p>
+      </div>
+    </div>
+
+  </div>
+
+</footer>
+</body>
+
+</html>
