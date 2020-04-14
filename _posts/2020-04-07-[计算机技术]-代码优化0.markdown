@@ -2,6 +2,7 @@
 layout: post
 title:  "[计算机技术] 代码优化-综述"
 date:   2020-04-07 01:43:52 +0800
+comments: true
 categories: [计算机技术, 优化]
 ---
 > "Premature optimization is the root of all evil."
