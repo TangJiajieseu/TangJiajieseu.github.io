@@ -132,7 +132,7 @@ void combine4(vec_ptr v, data_t *dest) {
 | combine3 | 移除`get_vec_element` |   4.8    |   6.0    |    6.0     |    7.6     |
 | combine4 |   临时变量保存结果    |   0.7    |   1.9    |    1.9     |    3.2     |
 
-可以见到，速度提升非常明显。(这里有一个我非常疑惑的点，理论上long add对应的汇编指令时延下限应该是1，long mul对应下限是3，double add对应是3，double mul对应是5，可是这里的结果似乎更像时延下限分别是1，2，2，3，我查阅了intel的`haswell`架构汇编指令时延并debug了各种情况都没有发现问题所在，欢迎有兴趣的小伙伴一起来讨论这个问题)。
+可以见到，速度提升非常明显。(这里有一个我非常疑惑的点，理论上long add对应的汇编指令时延下限应该是1，long mul对应下限是3，double add对应是3，double mul对应是5，可是这里的结果似乎更像时延下限分别是1，2，2，3，我查阅了intel的*Haswell*架构汇编指令时延并debug了各种情况都没有发现问题所在，欢迎有兴趣的小伙伴一起来讨论这个问题)。
 
 同样，为什么编译器不会帮我们做这一步的优化呢？这是因为，没有人能保证`dest`和`v`中元素的地址是否一致，换言之，如下两个代码的运行结果是不一样的
 
@@ -152,7 +152,7 @@ combine3(v, &v->data[2]);
 当c或者c++代码被编译成机器码后，现代cpu会对重复的做下面几个事情：
 
 1.  *fetch* & decode。即读取当前行的机器码，并翻译成对应的操作，如对寄存器*rax*和*rbx*求和，读取或者写入内存地址等。
-2. *exec*。在这一步中，cpu每个时钟周期会读入多条可以执行的指令，并分配给对应的*functional units*，*functional units*可以看作cpu的核心劳动力，在`Haswell`架构中，一共有7个*functional units*，每个负责不同的任务。
+2. *exec*。在这一步中，cpu每个时钟周期会读入多条可以执行的指令，并分配给对应的*functional units*，*functional units*可以看作cpu的核心劳动力，在*Haswell*架构中，一共有7个*functional units*，每个负责不同的任务。
 3. commit。即将上一步的结果写入对应的内存或者寄存器中。
 
 上述只是个非常简单的cpu处理过程。每一步占用多个时钟周期。*Haswell*架构的各种基本运算的参数如下图所示
