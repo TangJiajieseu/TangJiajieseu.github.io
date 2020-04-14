@@ -438,7 +438,7 @@ gprof ./a.out
 
 #### 参考文献
 
-[csapp第五章]([http://csapp.cs.cmu.edu/](http://csapp.cs.cmu.edu/))
+[csapp第五章](http://csapp.cs.cmu.edu/)
 
 ### 完整代码
 
