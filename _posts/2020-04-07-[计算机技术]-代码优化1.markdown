@@ -156,7 +156,7 @@ combine3(v, &v->data[2]);
 
 上述只是个非常简单的cpu处理过程。每一步占用多个时钟周期。*Haswell*架构的各种基本运算的参数如下图所示
 
-<div style="text-align:center;"><img src="/assets/opt-1/image-20200409233953078.png"></div>
+<div style="text-align:center;"><img src="/assets/opt-1/image-20200409233953078.png" width="100%" height="100%"></div>
 
 首先，*Latency* 代表每条指令需要多少个时钟周期完成。如整数加法*Latency*为1，但是上面说过每条cpu指令至少有3个阶段（实际中有10多个阶段），为什么*Latency*可以做到1呢？这是因为cpu有一个重要的`pipelining`的机制。例如有3个加法运算，他们互相执行顺序可以任意变换，那么在cpu中，当第一条指令执行完*fetch*，开始执行*decode*，第二条指令开始执行*fetch*，以此类推，每条指令距上条指令执行完只差了1个时钟周期，因此*Latency*是1。如果一个代码是完全`pipelined`，就是说这个代码每个时钟周期都可以开始一个新的运算，那么这个代码就无法在时延上进行优化了。
 
