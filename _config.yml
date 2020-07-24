@@ -29,6 +29,9 @@ github_username:  Tangjiajieseu
 theme: minima
 plugins:
   - jekyll-feed
+gems:
+plugins:
+  - jekyll-toc
 
 markdown: kramdown
 
@@ -51,3 +54,4 @@ markdown: kramdown
 #   - vendor/cache/
 #   - vendor/gems/
 #   - vendor/ruby/
+

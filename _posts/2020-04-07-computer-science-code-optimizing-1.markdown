@@ -1,11 +1,15 @@
 ---
 layout: post
-title:  "[计算机技术] 代码优化-线性代码优化"
+title:  "[计算机技术] 代码优化1-线性代码优化"
 date:   2020-04-07 01:43:52 +0800
 comments: true
 categories: [计算机技术, 优化, 循环展开, intel架构]
 mathjax: true
 ---
+
+* TOC
+{:toc}
+
 > "Premature optimization is the root of all evil."
 
 ## 概述
@@ -423,7 +427,7 @@ data_t data[N] __attribute((aligned(32)));
 
 另一个是**分支预测**，在遇到判断语句时，cpu不会等到判断表达式的结果出来再去跳转分支，而是直接先运行`if`后面的分支，如果发现这个分支不正确，则取消这个分支上的所有计算，这个代价是很大的，所以在写代码时需要尽量将可能走的分支写在前面。
 
-还有**profile**的问题，众所周知，检查内存泄漏可以使用
+还有**profile**的问题，众所周知，检查内存泄漏`valgrind --tool=callgrind --simulate-cache=yes program-to-run program-arguments`可以使用
 
 ```bash
 valgrind --tool=memcheck ./a.out

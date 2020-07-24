@@ -1,11 +1,15 @@
 ---
 layout: post
-title:  "[计算机技术] 代码优化-缓存读写优化"
+title:  "[计算机技术] 代码优化2-缓存读写优化"
 date:   2020-06-08 15:57:52 +0800
 comments: true
 categories: [计算机技术, 优化, 循环展开, intel架构]
 mathjax: true
 ---
+
+* TOC
+{:toc}
+
 > "Premature optimization is the root of all evil."
 
 ## 概述
@@ -245,4 +249,6 @@ int main() {
 ```
 
 ## 后记
-**locality**在并行中才体现出非常大的重要性，包括缓存一致性，不同线程之间的内存访问冲突，live lock等，再下一节会具体介绍。
+缓存优化本质上是一个求最优调度方式的问题，一些常见的图形图像加速编程语言如halide, taichi本质上就是把算法和调度分离，在处理规则稠密的数据时，本质上就是在固定算法的情况下找到最优的调度策略实现最少的**cache miss**，从而加速算法。
+
+**locality**在并行中也有非常大的重要性，包括缓存一致性，不同线程之间的内存访问冲突，false sharing等，再下一节会具体介绍。
