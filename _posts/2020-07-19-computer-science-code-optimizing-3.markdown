@@ -64,15 +64,291 @@ lock = 0;
 
 #### OpenMP
 
+OpenMP是一个为多线程服务的共享内存模式的并行api。它是基于C的，所以使用起来非常方便，不需要学复杂的用法。使用时只需要保证
+
+1.C或者C++头文件包含`#include <omp.h>`.
+
+2.编译时需要加flag：`gcc -fopenmp`(在mac系统的nnvm编译器里需要加`-Xpreprocessor -fopenmp  -lomp`)
+
+OpenMP的工作原理是开始执行程序时，只有一个主线程线性执行，直到遇到第一个并行块区域，然后他会执行**fork**，也就是创建很多个并行线程。所有线程运行完后，主线程会进行**join**操作，也就是同步这些线程并且结束他们。
+
+OpenMP的基本结构如下：
+
+```c++
+#include <omp.h>
+#pragma omp parallel //[private(i)] [shared(share_val)]
+{  // 这个大括号必须出现在这个位置，不可以接着上一行的命令
+	/* parallel codes */
+}
+```
+
+其中，private语句声明每个线程私有的变量名，shared声明每个线程共享的变量名。默认在线程外定义的变量都是共享的。
+
+`OMP_NUM_THREADS`环境变量决定了会创建多少个线程，在每个线程中，可以通过如下指令读取或设置线程数。
+
+```c++
+omp_set_num_threads(x);  // 设置线程个数
+num_th = omp_get_num_threads();  // 获得线程个数
+th_ID = omp_get_thread_num();  // 获得当前线程id
+```
+
+那么，一个OpenMP的并行hello world代码就如下
+
+```c++
+#include <stdio.h>
+#include <omp.h>
+int main() {
+  int nthreads, tid;
+  /* fork线程，并且设置tid为每个线程的私有变量 */
+#pragma omp parallel private(tid)
+  {
+    tid = omp_get_thread_num(); /* 获得当前线程id */
+    printf("Hello World from thread = %d\n", tid);
+    /* 仅有主线程会执行下面代码 */
+    if (tid == 0) {
+      nthreads = omp_get_num_threads();
+      printf("Number of threads = %d\n", nthreads);
+    }
+  }  // 默认所有的线程都会同步，然后join到主线程，并且结束
+}
+```
+
+接下来介绍一些常用的OpenMP的指令，首先是并行for循环
+
+```c++
+int i;
+#pragma omp parallel for [schedule(type [, chunk])]
+for (i = 0; i < len; ++i) {
+	/* parallel codes */
+	for (int j = 0; j < i; ++j) {  // 双重循环时内部循环不并行
+		/* inner loop codes */
+	}
+}
+```
+
+OpenMP会把循环拆成和线程个数相等的**chunks**，例如`len = 100`并且有2个线程时，**chunk0**就是0-49，**chunk1**就是50-99。另外不允许循环里有能中途退出循环的语句，如`break`,`return`,`go to`等。
+
+另外需要介绍一下可选的参数`schedule`。括号里`type`常用的为`static`或者`dynamic`，chunk为每个线程分配到的循环次数，默认为平均分配给每个线程对应的数值。`static`情况下，所有线程执行完`chunk`次循环后，再执行下一轮剩下的对应循环；而`dynamic`情况下，每个线程执行好了，就会直接开始执行下一个`chunk`的循环，不会等待别的线程。
+
+当循环中需要做`reduction`操作时，可以在指令后面加`reduction (operator: var)`，例如
+
+```c++
+int i, result = 0;
+#pragma omp parallel for reduction(+: result)
+for (i = 0; i < n; ++i)
+  result = result + (a[i] * b[i]);
+```
+
+另外常见的指令还有：
+
+`sections`用于规定每个线程需要执行哪些任务
+
+`single`指定并行程序中只会被执行一次的代码
+
+`critical`保证代码中的指令同一时间只有一份线程在运行，和锁的作用一样。
+
+#### 并行中的缓存一致性和false sharing
+
+当线程被分配到不同的处理器核上时，每个线程都有自己的缓存，此时就会出现一个问题。例如对于共享变量`a`，线程B先读取`a`到缓存中，然后线程A对`a`进行写入，而线程B如果直接读取 `a`，就会得到缓存中的未被修改的值，这时就会发生错误。所以多线程中需要保证缓存是一致的。
+
+解决方案是，每当一个线程对一个内存地址写入时，通过总线通知其他所有缓存，这个地址的值变得无效了，也就是把对应缓存的`valide`位设为0（这个位的另一个作用是初始化时告诉代码这一段内存和数值是随机初始化的无用值还是已经被初始化的正确值），这样别的线程再去读取时就会发生**cache miss**，然后去内存重新读取，这样的操作称作**snooping**。
+
+回到之前的例子，当线程A不断的对地址为4000位置的内存进行读写，而线程B不断对地址位置为4012的内存进行读写，而cache block的size是36byte时，**snooping**会导致什么？它们会不断的发生**cache miss**并不断的读写内存值，仿佛cache不存在了，这个问题就叫做**false sharing**，也叫做**block ping-pong**。所以一般并行for语句时，一个线程总是执行相邻的index，而不是以**thread number**为stride跳跃着执行循环。
+
+#### C++11中的线程池实现
+
+上面介绍了一些比较基础的并行，有时候我们每个任务的时间差异很大，需要并行执行的任务也很多，因此下面介绍线程安全的Queue和线程池。线程池接受不断到来的需要并行执行的函数，然后把它们push进Queue中，而工作线程则会不断查询Queue是否有函数需要执行，有就执行完。
+
+对用户而言，用户只需把需要并行执行的函数发送给线程池就可以。
+
+##### 线程安全的Queue
+
+线程安全的Queue主要通过锁和条件变量构成，push时上锁，并发送条件变量；pop有2种选项，第一种`try_pop`，成功则返回`true`，失败返回`false`（Queue为空），第二种`wait_and_pop`，当Queue为，代码如下
+
+```c++
+#ifndef THREADSAFE_QUEUE_H
+#define THREADSAFE_QUEUE_H
+#include<thread>
+#include<queue>
+#include<exception>
+#include<iostream>
+#include<mutex>
+#include<condition_variable>
+
+template<typename T>
+class threadsafe_queue
+{
+private:
+    mutable std::mutex mut;
+    std::queue<T> data_queue;
+    std::condition_variable data_cond;
+public:
+    threadsafe_queue() {}
+    void push(T new_value)
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        data_queue.push(std::move(new_value));
+        data_cond.notify_one();
+    }
+    
+    void wait_and_pop(T &value)
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        data_cond.wait(lk, [this]{return !data_queue.empty();});
+        value = std::move(data_queue.front());
+        data_queue.pop();
+    }
+
+    std::shared_ptr<T> wait_and_pop() 
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        data_cond.wait(lk, [this]{return !data_queue.empty();});
+        std::shared_ptr<T> res(std::make_shared<T>(std::move(data_queue.front())));
+        data_queue.pop();
+        return res;
+    }
+    std::shared_ptr<T> try_pop() 
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        if (data_queue.empty())
+            return std::shared_ptr<T>();
+        std::shared_ptr<T> res(std::make_shared<T>(std::move(data_queue.front())));
+        data_queue.pop();
+        return res;
+    }
+    bool try_pop(T &value)
+    {
+        std::unique_lock<std::mutex> lk(mut);
+        if (data_queue.empty())
+            return false; 
+        value = std::move(data_queue.front());
+        data_queue.pop();
+        return true;
+    }
+    bool empty() const
+    {
+        std::lock_guard<std::mutex> lk(mut);
+        return data_queue.empty();
+    }
+};
+
+#endif // THREADSAFE_QUEUE_H
+```
+
+#####  线程池
+
+线程池创建工作线程，然后维护一个元素为函数的成员变量`worker_queue`。代码如下
+
+```c++
+#ifnef THREAD_POOL_H
+#define THREAD_POOL_H
+#include "threadsafe_queue.h"
+
+#include <iostream>
+#include <functional>
+#include <atomic>
+#include <thread>
 
 
-#### 并行中的缓存一致性
+class join_threads
+{
+    std::vector<std::thread> &threads;
+public:
+    explicit join_threads(std::vector<std::thread> &threads_):
+        threads(threads_)
+    {}
+    ~join_threads()
+    {
+        for(unsigned long i = 0; i < threads.size(); ++i)
+        {
+            if (threads[i].joinable())
+                threads[i].join();
+        }
+    }
+};
 
-#### 线程安全的Queue
+class thread_pool
+{
+    std::atomic_bool done;
+    threadsafe_queue<std::function<void()> > worker_queue;
+    std::vector<std::thread> threads;
+    join_threads joiner;
+    void worker_thread()
+    {
+        while(!done)
+        {
+            std::function<void()> task;
+            if(worker_queue.try_pop(task))
+            {
+                task();
+            }
+            else
+            {
+                std::this_thread::yield();
+            }
+        }
+    }
+public:
+    thread_pool():
+        done(false), joiner(threads)
+    {
+        unsigned const thread_count = std::thread::hardware_concurrency();
+        try
+        {
+            for (unsigned i = 0; i < thread_count; ++i)
+            {
+                threads.push_back(
+                        std::thread(&thread_pool::worker_thread, this));
+            }
+        }
+        catch(...)
+        {
+            done = true;
+            throw "an error occured!\n";
+        }
+    }
+    ~thread_pool()
+    {
+        done = true;
+    }
+    template<typename FunctionType>
+    void submit(FunctionType f)
+    {
+        worker_queue.push(std::function<void()>(f));
+    }
+};
 
-#### 线程池
+#endif // THREAD_POOL_H
+```
+
+用户使用时，只需要需要执行下面指令
+
+ ```c++
+#include "thread_pool.h"
+
+#include <iostream>
+#include <functional>
+#include <atomic>
+#include <thread>  // 必须包含这个头文件
+
+std::atomic<int> cnt;  // 原子变量
+void task() {
+    cnt.fetch_add(10);
+    std::cout<<cnt.load()<<std::endl;
+}
+int main() {
+    thread_pool tp;
+    for (int i = 0; i < 100; ++i)
+    {
+        std::function<void()> f = task;
+        tp.submit(f);  //提交需要执行的函数
+    }
+}
+ ```
 
 #### OpenMPI和进程间通信
+
+
 
 ---
 
