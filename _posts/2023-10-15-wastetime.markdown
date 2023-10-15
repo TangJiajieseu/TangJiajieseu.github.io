@@ -21,7 +21,7 @@ categories: 回忆录
 
 冲破都不忘看漂亮妹妹的ts和看猴表演不付门票的妹妹
 
-<div style="text-align:center;"><img src="/assets/wastetime/cp.png" width="100%" height="100%"></div>
+<div style="text-align:center;"><img src="/assets/wastetime/cp.jpeg" width="100%" height="100%"></div>
 
 每天都觉得时间太少不够用，突然跳脱出来，又觉得似乎自己啥都没干，啥都没有，啥都不是。
 
